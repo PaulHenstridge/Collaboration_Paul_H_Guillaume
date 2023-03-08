@@ -8,5 +8,8 @@ class Customer:
     def reduce_wallet(self, amount):
         self.wallet -= amount
 
-    def can_pay_for_drink(self, amount):
+    def can_pay(self, amount):
         return self.wallet > amount
+
+    def rejuvinate(self, food):
+        self.drunkenness -= food.rejuvination
