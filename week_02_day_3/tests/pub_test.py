@@ -6,12 +6,14 @@ from src.customer import Customer
 
 class TestPub(unittest.TestCase):
     def setUp(self):
-        self.whiskey_sour = Drink("Whiskey Sour", 8.0)
-        self.beer = Drink("Beer", 4.0)
-        self.wine = Drink("Wine", 6.0)
+        self.whiskey_sour = Drink("Whiskey Sour", 8.0, 1)
+        self.beer = Drink("Beer", 4.0, 2)
+        self.wine = Drink("Wine", 6.0, 3)
         drinks_list = [self.whiskey_sour, self.beer, self.wine]
         self.pub = Pub("The Drunken Sailor", 0, drinks_list)
-        self.customer = Customer("John Lennon", 50)
+        self.customer = Customer("John Lennon", 50, 50, 5)
+        self.customer_underage = Customer("Junior Lennon", 5, 15, 0)
+        self.customer_wasted = Customer("Boozy Lennon", 5, 15, 20)
 
     # def test_pub_has_drink__found(self):
     #     has_beer = self.pub.has_drink(self.beer)
@@ -25,11 +27,15 @@ class TestPub(unittest.TestCase):
         drink = self.pub.find_drink_by_name("Beer")
         self.assertEqual("Beer", drink.name)
 
+    def test_customer_is_not_wasted__fail(self):
+        self.assertFalse(self.pub.customer_is_not_wasted(self.customer_wasted))
+
     def test_sell_a_drink__sucess(self):
         drink = self.pub.find_drink_by_name("Beer")
         price = drink.price
-        if self.customer.can_pay_for_drink(price):
-            self.customer.reduce_wallet(price)
-            self.pub.add_to_till(price)
+        self.customer.reduce_wallet(price)
+        self.pub.add_to_till(price)
+        self.assertTrue(self.customer.can_pay_for_drink(price))
+        self.assertTrue(self.pub.customer_is_not_wasted(self.customer))
         self.assertEqual(4, self.pub.till)
         self.assertEqual(46, self.customer.wallet)
